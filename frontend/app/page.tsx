@@ -4,6 +4,8 @@ import Header from './components/Header';
 import MainContent from './components/MainContent';
 import Benefits from './components/Benefits';
 import Features from './components/Features';
+import FAQ from './components/FAQ';
+import Footer from './components/Footer';
 
 const Home: React.FC = () => {
   return (
@@ -18,6 +20,8 @@ const Home: React.FC = () => {
       <MainContent />
       <Benefits />
       <Features />
+      <FAQ />
+      <Footer />
     </div>
   );
 };

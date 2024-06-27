@@ -30,12 +30,12 @@ const benefits = [
 
 const Benefits: React.FC = () => {
   return (
-    <section className="py-20 bg-gray-100">
+    <section id="benefits" className="py-20 bg-gray-100">
       <div className="container mx-auto text-center">
         <h2 className="text-4xl font-bold text-gray-900 mb-12">
           Почему AI Accountant — это выгодно?
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {benefits.map((benefit, index) => (
             <div key={index} className="bg-white shadow-xl rounded-lg p-8 transform transition duration-500 hover:scale-105 hover:bg-blue-50">
               <div className="flex justify-center mb-4">

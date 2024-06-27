@@ -31,3 +31,92 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Добавьте этот CSS для плавной анимации заголовка */
+@keyframes fadeColor {
+  0% {
+    color: #3182ce;
+  }
+  50% {
+    color: #2b6cb0;
+  }
+  100% {
+    color: #3182ce;
+  }
+}
+
+.animate-fade-color {
+  animation: fadeColor 5s infinite;
+}
+
+/* Добавьте этот CSS для стилизации ссылок навигации */
+nav a {
+  position: relative;
+  color: #2d3748;
+  text-decoration: none;
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #3182ce;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  display: block;
+  background: #3182ce;
+  transition: width 0.3s;
+  bottom: -5px;
+  left: 0;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* Добавьте этот CSS для стилизации блоков преимуществ */
+.benefit-block {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.benefit-block:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* globals.css */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 2s ease-in-out;
+}
+
+/* globals.css */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
