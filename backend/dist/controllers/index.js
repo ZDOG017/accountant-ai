@@ -12,31 +12,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateResponse = void 0;
+exports.handleFileUpload = exports.generateResponse = void 0;
 const openai_1 = __importDefault(require("openai"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const path_1 = __importDefault(require("path"));
+const xlsx_1 = __importDefault(require("xlsx"));
 dotenv_1.default.config();
-// OpenAIApi required config
 const openai = new openai_1.default({
     apiKey: process.env.OPENAI_API_KEY,
 });
-// These arrays are to maintain the history of the conversation
 const conversationContext = [];
-// Обновление currentMessages типа
 const currentMessages = [];
-// Controller function to handle chat conversation
 const generateResponse = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
         const { prompt } = req.body;
-        const modelId = "gpt-3.5-turbo";
+        const modelId = "gpt-4o";
         const promptText = `${prompt}\n\nResponse:`;
-        // Restore the previous context
         for (const [inputText, responseText] of conversationContext) {
             currentMessages.push({ role: "user", content: inputText });
             currentMessages.push({ role: "assistant", content: responseText });
         }
-        // Stores the new message
         currentMessages.push({ role: "user", content: promptText });
         const result = yield openai.chat.completions.create({
             model: modelId,
@@ -52,3 +48,39 @@ const generateResponse = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.generateResponse = generateResponse;
+const handleFileUpload = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const file = req.file;
+        const prompt = req.body.prompt;
+        if (!file) {
+            return res.status(400).send({ message: "No file uploaded" });
+        }
+        const filePath = path_1.default.join(__dirname, '..', '..', file.path);
+        const workbook = xlsx_1.default.readFile(filePath);
+        const sheetNames = workbook.SheetNames;
+        const sheetsData = sheetNames.map(sheetName => {
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = xlsx_1.default.utils.sheet_to_json(worksheet);
+            return { sheetName, jsonData };
+        });
+        let fileAnalysis = "The Excel file contains the following sheets and data:\n\n";
+        sheetsData.forEach(sheet => {
+            fileAnalysis += `Sheet: ${sheet.sheetName}\nData: ${JSON.stringify(sheet.jsonData, null, 2)}\n\n`;
+        });
+        const modelId = "gpt-4o";
+        const promptText = `Analyze the following Excel file data and respond to the user's prompt:\n\n${fileAnalysis}\n\nUser's Prompt: ${prompt}\n\nResponse:`;
+        currentMessages.push({ role: "user", content: promptText });
+        const result = yield openai.chat.completions.create({
+            model: modelId,
+            messages: currentMessages,
+        });
+        const responseText = ((_a = result.choices[0].message) === null || _a === void 0 ? void 0 : _a.content) || '';
+        res.send({ response: responseText });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+exports.handleFileUpload = handleFileUpload;
